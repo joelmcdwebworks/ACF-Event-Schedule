@@ -34,6 +34,11 @@
 	line-height: inherit;
 }
 
+.aes-schedule p,
+.aes-schedule .aes-schedule__day p {
+	margin: 0;
+}
+
 .aes-schedule__date-group + .aes-schedule__date-group {
 	margin-block-start: 2.5rem;
 }
@@ -53,7 +58,7 @@
 	padding: 14px;
 }
 
-.aes-schedule__time-slot {
+.aes-schedule p.aes-schedule__time-slot {
 	margin: 1.5em 0 0;
 	font-weight: 700;
 	background-color: var(--aes-header-bg);
@@ -84,7 +89,7 @@
 	font-weight: 700;
 }
 
-.aes-schedule__session-time {
+.aes-schedule p.aes-schedule__session-time {
 	margin: 0.75em 0 0;
 	font-weight: 400;
 }
@@ -156,7 +161,7 @@
 	border: 0;
 }
 
-.aes-schedule__empty {
+body p.aes-schedule__empty {
 	margin: 0;
 }
 
@@ -180,7 +185,7 @@
 			background-color: var(--aes-header-bg);
 		}
 
-		.aes-schedule__time-slot,
+		.aes-schedule p.aes-schedule__time-slot,
 		.aes-schedule__cell,
 		.aes-schedule__column-header {
 			border: none;
@@ -241,7 +246,7 @@
 		display: none;
 	}
 
-	.aes-schedule__time-slot {
+	.aes-schedule p.aes-schedule__time-slot {
 		margin-top: 1.5rem;
 	}
 

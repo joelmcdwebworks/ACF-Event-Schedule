@@ -4,7 +4,7 @@ Tags: acf, events, schedule, sessions, speakers
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.1.14
+Stable tag: 1.1.15
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -25,6 +25,10 @@ Requires Advanced Custom Fields Pro.
 After the first GitHub Release that includes a plugin zip, WordPress will offer later versions on the Plugins screen.
 
 == Changelog ==
+
+= 1.1.15 =
+* Reset theme paragraph margins in the schedule grid so session cards and time slots keep plugin spacing.
+* Fix a migrator key reference.
 
 = 1.1.14 =
 * First GitHub release: sessions, speakers, and a time-by-space schedule grid for existing event post types.
