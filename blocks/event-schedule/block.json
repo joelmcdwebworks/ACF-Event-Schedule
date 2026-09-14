@@ -1,0 +1,26 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "acf-event-schedule/schedule",
+	"title": "Event Schedule",
+	"category": "widgets",
+	"icon": "calendar-alt",
+	"description": "Display an event session schedule as a time-by-space grid.",
+	"keywords": [ "schedule", "event", "sessions" ],
+	"textdomain": "acf-event-schedule",
+	"attributes": {
+		"postId": {
+			"type": "integer",
+			"default": 0
+		},
+		"date": {
+			"type": "string",
+			"default": ""
+		}
+	},
+	"supports": {
+		"html": false,
+		"align": [ "wide", "full" ]
+	},
+	"usesContext": [ "postId" ]
+}

@@ -1,0 +1,6 @@
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/README.md export-ignore
+/lib/plugin-update-checker/README.md export-ignore
+/lib/plugin-update-checker/composer.json export-ignore

@@ -1,0 +1,310 @@
+.aes-schedule {
+	--aes-border: #dcdcde;
+	--aes-header-bg: #f6f7f7;
+	--aes-session-bg: #fff;
+	--aes-text: currentColor;
+	--aes-gap: 1px;
+	width: 100%;
+}
+
+.aes-schedule__scroller {
+	overflow-x: auto;
+}
+
+.aes-schedule__scroller:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+.aes-schedule__day {
+	font-size: 0.875rem;
+	background-color: transparent;
+	min-width: 100%;
+}
+
+.aes-schedule__day h4,
+.aes-schedule__day h5,
+.aes-schedule__day p,
+.aes-schedule__day dl,
+.aes-schedule__day dt,
+.aes-schedule__day dd,
+.aes-schedule__day ul,
+.aes-schedule__day li {
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.aes-schedule__date-group + .aes-schedule__date-group {
+	margin-block-start: 2.5rem;
+}
+
+.aes-schedule__column-header {
+	display: none;
+	font-weight: 700;
+	text-align: center;
+	padding: 10px 8px;
+	background-color: var(--aes-header-bg);
+}
+
+.aes-schedule__time-slot,
+.aes-schedule__session,
+.aes-schedule__cell {
+	border: 1px solid var(--aes-border);
+	padding: 14px;
+}
+
+.aes-schedule__time-slot {
+	margin: 1.5em 0 0;
+	font-weight: 700;
+	background-color: var(--aes-header-bg);
+	text-align: start;
+}
+
+.aes-schedule__time-slot time {
+	font-weight: inherit;
+}
+
+.aes-schedule__cell {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+	background-color: var(--aes-session-bg);
+	border-top: none;
+}
+
+.aes-schedule__session {
+	border: 0;
+	padding: 0;
+	background: transparent;
+	position: relative;
+}
+
+.aes-schedule__session-title {
+	margin: 0;
+	font-weight: 700;
+}
+
+.aes-schedule__session-time {
+	margin: 0.75em 0 0;
+	font-weight: 400;
+}
+
+.aes-schedule__session-title a,
+.aes-schedule__session-speakers a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.aes-schedule__session-title a:hover,
+.aes-schedule__session-title a:focus,
+.aes-schedule__session-speakers a:hover,
+.aes-schedule__session-speakers a:focus {
+	text-decoration-thickness: 2px;
+}
+
+.aes-schedule__session-title a:focus-visible,
+.aes-schedule__session-speakers a:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
+}
+
+.aes-schedule__session-speakers,
+.aes-schedule__session-space {
+	margin: 0.75em 0 0;
+}
+
+.aes-schedule__session-speakers ul {
+	display: inline;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.aes-schedule__session-speakers li {
+	display: inline;
+	margin: 0;
+}
+
+.aes-schedule__session-space dt {
+	font-weight: 400;
+}
+
+.aes-schedule__session-space dd {
+	display: inline;
+	margin: 0;
+}
+
+.aes-schedule__session--break {
+	text-align: center;
+}
+
+.aes-schedule__session--break .aes-schedule__session-title {
+	font-weight: 700;
+}
+
+.aes-schedule__sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	clip-path: inset(50%);
+	white-space: nowrap;
+	border: 0;
+}
+
+.aes-schedule__empty {
+	margin: 0;
+}
+
+@supports (display: grid) {
+	@media screen and (min-width: 550px) {
+		.aes-schedule__day {
+			display: grid;
+			grid-gap: var(--aes-gap);
+			padding: var(--aes-gap);
+			background-color: var(--aes-border);
+			box-sizing: border-box;
+		}
+
+		.aes-schedule__column-header {
+			display: block;
+			grid-row: tracks;
+			position: sticky;
+			top: 0;
+			z-index: 10;
+			margin: 0;
+			background-color: var(--aes-header-bg);
+		}
+
+		.aes-schedule__time-slot,
+		.aes-schedule__cell,
+		.aes-schedule__column-header {
+			border: none;
+			margin: 0;
+			position: relative;
+			z-index: 5;
+		}
+
+		.aes-schedule__time-slot {
+			grid-column: times;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			min-width: 6.5rem;
+			text-align: center;
+			background-color: var(--aes-session-bg);
+			font-weight: 700;
+		}
+
+		.aes-schedule__cell {
+			background-color: var(--aes-session-bg);
+			min-height: 4.5rem;
+		}
+
+		.aes-schedule__cell--empty {
+			background-color: var(--aes-session-bg);
+		}
+
+		.aes-schedule__cell--span {
+			text-align: center;
+			background-color: var(--aes-session-bg);
+			justify-content: center;
+		}
+
+		.aes-schedule__cell--all {
+			background-color: var(--aes-session-bg);
+			text-align: center;
+			justify-content: center;
+		}
+
+		.aes-schedule__session-space {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			clip-path: inset(50%);
+			white-space: nowrap;
+			border: 0;
+		}
+	}
+}
+
+@media screen and (max-width: 549px) {
+	.aes-schedule__column-header {
+		display: none;
+	}
+
+	.aes-schedule__time-slot {
+		margin-top: 1.5rem;
+	}
+
+	.aes-schedule__cell {
+		border-top: none;
+	}
+
+	.aes-schedule__cell--empty {
+		display: none;
+	}
+
+	.aes-schedule__cell--span {
+		background-color: var(--aes-session-bg);
+		text-align: center;
+	}
+
+	.aes-schedule__cell--all {
+		background-color: var(--aes-session-bg);
+		text-align: center;
+	}
+}
+
+.aes-single {
+	--aes-border: #dcdcde;
+	max-width: 48rem;
+}
+
+.aes-single__back {
+	margin: 0 0 1.25rem;
+}
+
+.aes-single__title {
+	margin: 0;
+}
+
+.aes-single__media {
+	margin: 1.5rem 0 0;
+}
+
+.aes-single__media img {
+	height: auto;
+	max-width: 100%;
+}
+
+.aes-single__content {
+	margin-top: 1.5rem;
+}
+
+.aes-single__related {
+	margin-top: 2.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--aes-border);
+}
+
+.aes-single__related-title {
+	margin: 0 0 0.75rem;
+}
+
+.aes-single__related-list {
+	margin: 0;
+	padding-left: 1.25rem;
+}
+
+.aes-single__related-list li + li {
+	margin-top: 0.35rem;
+}
