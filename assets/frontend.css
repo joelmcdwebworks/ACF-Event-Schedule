@@ -36,7 +36,7 @@
 
 .aes-schedule p,
 .aes-schedule .aes-schedule__day p {
-	margin: 0;
+	margin: 0 !important;
 }
 
 .aes-schedule__date-group + .aes-schedule__date-group {
@@ -59,7 +59,7 @@
 }
 
 .aes-schedule p.aes-schedule__time-slot {
-	margin: 1.5em 0 0;
+	margin: 1.5em 0 0 !important;
 	font-weight: 700;
 	background-color: var(--aes-header-bg);
 	text-align: start;
@@ -90,7 +90,7 @@
 }
 
 .aes-schedule p.aes-schedule__session-time {
-	margin: 0.75em 0 0;
+	margin: 0.75em 0 0 !important;
 	font-weight: 400;
 }
 
@@ -162,7 +162,7 @@
 }
 
 body p.aes-schedule__empty {
-	margin: 0;
+	margin: 0 !important;
 }
 
 @supports (display: grid) {
@@ -192,6 +192,10 @@ body p.aes-schedule__empty {
 			margin: 0;
 			position: relative;
 			z-index: 5;
+		}
+
+		.aes-schedule p.aes-schedule__time-slot {
+			margin: 0 !important;
 		}
 
 		.aes-schedule__time-slot {
@@ -247,7 +251,7 @@ body p.aes-schedule__empty {
 	}
 
 	.aes-schedule p.aes-schedule__time-slot {
-		margin-top: 1.5rem;
+		margin-top: 1.5rem !important;
 	}
 
 	.aes-schedule__cell {

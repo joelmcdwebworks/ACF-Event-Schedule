@@ -2,7 +2,7 @@
 
 Create sessions, speakers, and event schedules with Advanced Custom Fields.
 
-[![Version](https://img.shields.io/badge/version-1.1.15-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
+[![Version](https://img.shields.io/badge/version-1.1.16-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-21759B)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4)](https://www.php.net/)
 [![ACF](https://img.shields.io/badge/ACF-Pro-00D3AA)](https://www.advancedcustomfields.com/pro/)
