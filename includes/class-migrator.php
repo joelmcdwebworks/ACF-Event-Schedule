@@ -257,7 +257,7 @@ class Migrator {
 			}
 
 			$field_key = (string) get_post_meta( $event_id, '_' . Field::EVENT_SPEAKERS, true );
-			if ( Field::KEY_SESSION_SPEAKERS === $field_key ) {
+			if ( '' !== $field_key && Field::KEY_EVENT_SPEAKERS !== $field_key ) {
 				continue;
 			}
 
