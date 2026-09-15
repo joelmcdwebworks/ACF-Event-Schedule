@@ -2,7 +2,7 @@
 
 Create sessions, speakers, and event schedules with Advanced Custom Fields.
 
-[![Version](https://img.shields.io/badge/version-1.1.17-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
+[![Version](https://img.shields.io/badge/version-1.1.18-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-21759B)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4)](https://www.php.net/)
 [![ACF](https://img.shields.io/badge/ACF-Pro-00D3AA)](https://www.advancedcustomfields.com/pro/)
@@ -34,6 +34,10 @@ flowchart LR
 - [Updates](#updates)
 - [Setup](#setup)
 - [Display](#display)
+  - [Event schedule](#event-schedule)
+  - [Session layouts](#session-layouts)
+  - [Block](#block)
+  - [What visitors see](#what-visitors-see)
 - [CSV import and export](#csv-import-and-export)
 - [Customization](#customization)
 - [Event taxonomy](#event-taxonomy)
@@ -107,7 +111,7 @@ Speakers are optional and bidirectional with the speaker relationship. If anothe
 
 ## Display
 
-### Shortcode
+### Event schedule
 
 Use `[event-schedule]` on an event post, or pass an event ID:
 
@@ -121,6 +125,34 @@ Use `[event-schedule]` on an event post, or pass an event ID:
 |-----------|---------|-------------|
 | `post_id` | Current post | Event post ID |
 | `date` | *(all days)* | Optional day filter (`Y-m-d`) |
+
+### Session layouts
+
+Use `[session-times]` and `[session-speakers]` on a session post, or pass a session ID, when building session and speaker layouts in the Site Editor, a page builder, or a theme template:
+
+```
+[session-times]
+[session-speakers]
+[session-times post_id="456"]
+[session-speakers post_id="456"]
+```
+
+| Shortcode | Attribute | Default | Description |
+|-----------|-----------|---------|-------------|
+| `[session-times]` | `post_id` | Current post | Session post ID |
+| `[session-speakers]` | `post_id` | Current post | Session post ID |
+
+`[session-times]` prints the session’s date, start, and end in a fixed format, with the WordPress timezone abbreviation:
+
+```
+October 16, 2026: 1:00 PM to 2:00 PM MST
+```
+
+The date is always `F j, Y` and the times are always `g:i A`. The abbreviation comes from **Settings → General → Timezone**. Named zones such as `America/Denver` produce MST or MDT; a UTC offset produces a value such as `GMT-6`. Markup is `<span class="aes-session-times">` wrapping a `<time datetime>` element.
+
+`[session-speakers]` prints a comma-separated list of speaker names linked to their posts, wrapped in `<span class="aes-session-speakers">`. Unpublished speakers are omitted unless the current user can read them.
+
+Both shortcodes return empty when the target is not a readable session, or when times or speakers are missing.
 
 ### Block
 
@@ -186,7 +218,7 @@ your-theme/acf-event-schedule/schedule.php
 your-theme/acf-event-schedule/session-cell.php
 ```
 
-See [`templates/schedule.php`](templates/schedule.php) and [`templates/session-cell.php`](templates/session-cell.php). The grid root class is `.aes-schedule`.
+See [`templates/schedule.php`](templates/schedule.php) and [`templates/session-cell.php`](templates/session-cell.php). The grid root class is `.aes-schedule`. Session layout shortcodes use `.aes-session-times` and `.aes-session-speakers`.
 
 ### Filters
 
@@ -218,7 +250,7 @@ Pass an empty string as the date to render every day.
 
 Sessions and speakers are assigned a public `aes_linked_event` term that mirrors the Event field. Editors never pick this taxonomy: choosing an event on the session or speaker is enough. The term is a hook for theme PHP, Site Editor templates, and page-builder conditions.
 
-- Classic PHP: `has_term( 'my-event-slug', 'aes_linked_event' )` in `single-session.php` or `single-speaker.php`, or taxonomy templates `taxonomy-aes_linked_event.php` / `taxonomy-aes_linked_event-{slug}.php`.
+- Classic PHP: `has_term( 'my-event-slug', 'aes_linked_event' )` in `single-session.php` or `single-speaker.php`, or taxonomy templates `taxonomy-aes_linked_event.php` / `taxonomy-aes_linked_event-{slug}.php`. On session templates, `[session-times]` and `[session-speakers]` output the session’s time range and linked speakers.
 - Block themes: Site Editor templates for the Event taxonomy, including per-term variants.
 - Page builders: singular or archive conditions for the Schedule Event taxonomy (Kadence: “Schedule Event Archives” under Sessions/Speakers, then the event term). Term names match the event title; slugs follow the event post slug. Draft and private events use an opaque term name (`Event {id}`) until the event is publicly viewable.
 

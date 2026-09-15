@@ -186,6 +186,28 @@ class Helpers {
 	}
 
 	/**
+	 * Find a time block on an event by ID.
+	 *
+	 * @param int    $event_id Event post ID.
+	 * @param string $block_id Time block ID.
+	 * @return array<string, string>|null
+	 */
+	public static function get_time_block( $event_id, $block_id ) {
+		$block_id = (string) $block_id;
+		if ( '' === $block_id ) {
+			return null;
+		}
+
+		foreach ( self::get_time_blocks( $event_id ) as $block ) {
+			if ( $block['id'] === $block_id ) {
+				return $block;
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Flatten nested date / time-block rows into the schedule data shape.
 	 *
 	 * @param array<int, array<string, mixed>> $days Event date rows.
@@ -553,6 +575,82 @@ class Helpers {
 
 		$timestamp = strtotime( ( $date ? $date . ' ' : '1970-01-01 ' ) . $time );
 		return $timestamp ? wp_date( get_option( 'time_format' ), $timestamp ) : '';
+	}
+
+	/**
+	 * Format a session time range for layout shortcodes.
+	 *
+	 * Always uses F j, Y and g:i A, plus the site timezone abbreviation.
+	 *
+	 * @param string $date  Y-m-d date.
+	 * @param string $start Time string.
+	 * @param string $end   Time string.
+	 * @return string Empty when date or times cannot be resolved.
+	 */
+	public static function format_session_times_label( $date, $start, $end ) {
+		$start_dt = self::create_site_datetime( $date, $start );
+		$end_dt   = self::create_site_datetime( $date, $end );
+
+		if ( ! $start_dt || ! $end_dt ) {
+			return '';
+		}
+
+		$date_label  = wp_date( 'F j, Y', $start_dt->getTimestamp() );
+		$start_label = wp_date( 'g:i A', $start_dt->getTimestamp() );
+		$end_label   = wp_date( 'g:i A', $end_dt->getTimestamp() );
+		$tz          = self::timezone_abbreviation( $date, $start );
+
+		if ( ! $date_label || ! $start_label || ! $end_label || ! $tz ) {
+			return '';
+		}
+
+		/* translators: 1: date, 2: start time, 3: end time, 4: timezone abbreviation */
+		return sprintf(
+			__( '%1$s: %2$s to %3$s %4$s', 'acf-event-schedule' ),
+			$date_label,
+			$start_label,
+			$end_label,
+			$tz
+		);
+	}
+
+	/**
+	 * Timezone abbreviation for a date and time in the site timezone.
+	 *
+	 * @param string $date Y-m-d date.
+	 * @param string $time Time string.
+	 * @return string Empty when the datetime cannot be resolved.
+	 */
+	public static function timezone_abbreviation( $date, $time ) {
+		$datetime = self::create_site_datetime( $date, $time );
+		if ( ! $datetime ) {
+			return '';
+		}
+
+		return $datetime->format( 'T' );
+	}
+
+	/**
+	 * Create a DateTime in the site timezone.
+	 *
+	 * @param string $date Y-m-d date.
+	 * @param string $time Time string.
+	 * @return \DateTime|null
+	 */
+	private static function create_site_datetime( $date, $time ) {
+		$date = self::normalize_acf_date( $date );
+		if ( ! $date || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+			return null;
+		}
+
+		$normalized = self::normalize_acf_time( $time );
+		if ( ! $normalized ) {
+			return null;
+		}
+
+		$datetime = date_create( $date . ' ' . $normalized, wp_timezone() );
+
+		return $datetime instanceof \DateTime ? $datetime : null;
 	}
 
 	/**
