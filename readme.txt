@@ -4,7 +4,7 @@ Tags: acf, events, schedule, sessions, speakers
 Requires at least: 6.4
 Tested up to: 6.8
 Requires PHP: 8.0
-Stable tag: 1.1.18
+Stable tag: 1.1.19
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -25,6 +25,9 @@ Requires Advanced Custom Fields Pro.
 After the first GitHub Release that includes a plugin zip, WordPress will offer later versions on the Plugins screen.
 
 == Changelog ==
+
+= 1.1.19 =
+* Display saved session times in the WordPress site timezone instead of converting them as UTC.
 
 = 1.1.18 =
 * Add `[session-times]` and `[session-speakers]` shortcodes for session and speaker layouts.

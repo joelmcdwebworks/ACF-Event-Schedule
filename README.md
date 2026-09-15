@@ -2,7 +2,7 @@
 
 Create sessions, speakers, and event schedules with Advanced Custom Fields.
 
-[![Version](https://img.shields.io/badge/version-1.1.18-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
+[![Version](https://img.shields.io/badge/version-1.1.19-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-21759B)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4)](https://www.php.net/)
 [![ACF](https://img.shields.io/badge/ACF-Pro-00D3AA)](https://www.advancedcustomfields.com/pro/)
@@ -89,7 +89,7 @@ Edit an event post and fill in the **Event Schedule** fields:
 - **Time Blocks** — nested under each date, with start time, end time, and an optional title. Titles are shown on the schedule for break rows that have no sessions (lunch, registration, and similar).
 - **Spaces** — rooms or tracks, used as columns on the grid.
 
-Time block and space IDs are generated automatically.
+Time block and space IDs are generated automatically. Start and end times are saved and displayed as wall-clock times in the site timezone from **Settings → General → Timezone**.
 
 ### 3. Add speakers
 
@@ -148,7 +148,7 @@ Use `[session-times]` and `[session-speakers]` on a session post, or pass a sess
 October 16, 2026: 1:00 PM to 2:00 PM MST
 ```
 
-The date is always `F j, Y` and the times are always `g:i A`. The abbreviation comes from **Settings → General → Timezone**. Named zones such as `America/Denver` produce MST or MDT; a UTC offset produces a value such as `GMT-6`. Markup is `<span class="aes-session-times">` wrapping a `<time datetime>` element.
+The date is always `F j, Y` and the times are always `g:i A`. Both are the saved wall-clock values in the site timezone from **Settings → General → Timezone**. Named zones such as `America/Denver` produce MST or MDT; a UTC offset produces a value such as `GMT-6`. Markup is `<span class="aes-session-times">` wrapping a `<time datetime>` element.
 
 `[session-speakers]` prints a comma-separated list of speaker names linked to their posts, wrapped in `<span class="aes-session-speakers">`. Unpublished speakers are omitted unless the current user can read them.
 
@@ -162,6 +162,7 @@ Insert the **Event Schedule** block (`acf-event-schedule/schedule`) from the Wid
 
 The front end renders one section per day as a CSS grid of time versus space:
 
+- Times match the values entered in the admin, in the WordPress site timezone.
 - Session cards link to the session, and list time, speakers, and space.
 - A time block with a title and no sessions renders as a break row.
 - Visitors only see the schedule for events they can read. Password-protected events require the password (editors can still preview).

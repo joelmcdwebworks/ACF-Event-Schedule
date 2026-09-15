@@ -177,7 +177,7 @@ class Helpers {
 			return array();
 		}
 
-		$days = get_field( Field::EVENT_DATES, $event_id );
+		$days = get_field( Field::EVENT_DATES, $event_id, false );
 		if ( is_array( $days ) && ! empty( $days ) ) {
 			return self::flatten_event_dates( $days );
 		}
@@ -217,8 +217,15 @@ class Helpers {
 		$blocks = array();
 
 		foreach ( $days as $day ) {
-			$date  = isset( $day[ Field::EVENT_DATE ] ) ? (string) $day[ Field::EVENT_DATE ] : '';
-			$rows  = isset( $day[ Field::TIME_BLOCKS ] ) && is_array( $day[ Field::TIME_BLOCKS ] ) ? $day[ Field::TIME_BLOCKS ] : array();
+			if ( ! is_array( $day ) ) {
+				continue;
+			}
+
+			$date = (string) self::row_value( $day, Field::EVENT_DATE, Field::KEY_EVENT_DATE );
+			$rows = self::row_value( $day, Field::TIME_BLOCKS, Field::KEY_TIME_BLOCKS );
+			if ( ! is_array( $rows ) ) {
+				$rows = array();
+			}
 
 			foreach ( $rows as $row ) {
 				$block = self::normalize_time_block_row( $row, $date );
@@ -274,19 +281,48 @@ class Helpers {
 	 * @return array<string, string>|null
 	 */
 	private static function normalize_time_block_row( $row, $date ) {
-		$id = isset( $row[ Field::TIME_BLOCK_ID ] ) ? (string) $row[ Field::TIME_BLOCK_ID ] : '';
+		if ( ! is_array( $row ) ) {
+			return null;
+		}
+
+		$id = (string) self::row_value( $row, Field::TIME_BLOCK_ID, Field::KEY_TIME_BLOCK_ID );
 		if ( '' === $id ) {
 			return null;
 		}
 
+		$start = self::row_value( $row, Field::TIME_BLOCK_START, Field::KEY_TIME_BLOCK_START );
+		$end   = self::row_value( $row, Field::TIME_BLOCK_END, Field::KEY_TIME_BLOCK_END );
+
 		return array(
 			'id'     => $id,
-			'title'  => isset( $row[ Field::TIME_BLOCK_TITLE ] ) ? (string) $row[ Field::TIME_BLOCK_TITLE ] : '',
-			'date'   => self::normalize_acf_date( $date ),
-			'start'  => isset( $row[ Field::TIME_BLOCK_START ] ) ? (string) $row[ Field::TIME_BLOCK_START ] : '',
-			'end'    => isset( $row[ Field::TIME_BLOCK_END ] ) ? (string) $row[ Field::TIME_BLOCK_END ] : '',
+			'title'  => (string) self::row_value( $row, Field::TIME_BLOCK_TITLE, Field::KEY_TIME_BLOCK_TITLE ),
+			'date'   => self::normalize_acf_date( (string) $date ),
+			'start'  => self::normalize_acf_time( is_scalar( $start ) ? (string) $start : '' ),
+			'end'    => self::normalize_acf_time( is_scalar( $end ) ? (string) $end : '' ),
 			'css_id' => self::css_ident( $id ),
 		);
+	}
+
+	/**
+	 * Read a repeater cell by field name or field key.
+	 *
+	 * Unformatted ACF repeaters are keyed by field key.
+	 *
+	 * @param array<string, mixed> $row  Repeater row.
+	 * @param string               $name Field name.
+	 * @param string               $key  Field key.
+	 * @return mixed
+	 */
+	private static function row_value( $row, $name, $key ) {
+		if ( isset( $row[ $name ] ) ) {
+			return $row[ $name ];
+		}
+
+		if ( isset( $row[ $key ] ) ) {
+			return $row[ $key ];
+		}
+
+		return '';
 	}
 
 	/**
@@ -489,30 +525,9 @@ class Helpers {
 	 * @return string
 	 */
 	public static function format_time_range( $date, $start, $end ) {
-		$date_label = '';
-		$start_label = '';
-		$end_label   = '';
-
-		if ( $date && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
-			$timestamp = strtotime( $date . ' 00:00:00' );
-			if ( $timestamp ) {
-				$date_label = wp_date( get_option( 'date_format' ), $timestamp );
-			}
-		}
-
-		if ( $start ) {
-			$start_ts = strtotime( ( $date ? $date . ' ' : '1970-01-01 ' ) . $start );
-			if ( $start_ts ) {
-				$start_label = wp_date( get_option( 'time_format' ), $start_ts );
-			}
-		}
-
-		if ( $end ) {
-			$end_ts = strtotime( ( $date ? $date . ' ' : '1970-01-01 ' ) . $end );
-			if ( $end_ts ) {
-				$end_label = wp_date( get_option( 'time_format' ), $end_ts );
-			}
-		}
+		$date_label  = self::format_date_label( $date );
+		$start_label = $start ? self::format_site_datetime( $date, $start, get_option( 'time_format' ) ) : '';
+		$end_label   = $end ? self::format_site_datetime( $date, $end, get_option( 'time_format' ) ) : '';
 
 		$time = $start_label;
 		if ( $start_label && $end_label ) {
@@ -536,22 +551,8 @@ class Helpers {
 	 * @return string
 	 */
 	public static function format_time_only_range( $date, $start, $end ) {
-		$start_label = '';
-		$end_label   = '';
-
-		if ( $start ) {
-			$start_ts = strtotime( ( $date ? $date . ' ' : '1970-01-01 ' ) . $start );
-			if ( $start_ts ) {
-				$start_label = wp_date( get_option( 'time_format' ), $start_ts );
-			}
-		}
-
-		if ( $end ) {
-			$end_ts = strtotime( ( $date ? $date . ' ' : '1970-01-01 ' ) . $end );
-			if ( $end_ts ) {
-				$end_label = wp_date( get_option( 'time_format' ), $end_ts );
-			}
-		}
+		$start_label = $start ? self::format_site_datetime( $date, $start, get_option( 'time_format' ) ) : '';
+		$end_label   = $end ? self::format_site_datetime( $date, $end, get_option( 'time_format' ) ) : '';
 
 		if ( $start_label && $end_label ) {
 			/* translators: 1: start time, 2: end time */
@@ -573,8 +574,17 @@ class Helpers {
 			return '';
 		}
 
-		$timestamp = strtotime( ( $date ? $date . ' ' : '1970-01-01 ' ) . $time );
-		return $timestamp ? wp_date( get_option( 'time_format' ), $timestamp ) : '';
+		return self::format_site_datetime( $date, $time, get_option( 'time_format' ) );
+	}
+
+	/**
+	 * Format a date using the site date format, in the site timezone.
+	 *
+	 * @param string $date Y-m-d date.
+	 * @return string Empty when the date cannot be resolved.
+	 */
+	public static function format_date_label( $date ) {
+		return self::format_site_datetime( $date, '00:00:00', get_option( 'date_format' ) );
 	}
 
 	/**
@@ -588,16 +598,9 @@ class Helpers {
 	 * @return string Empty when date or times cannot be resolved.
 	 */
 	public static function format_session_times_label( $date, $start, $end ) {
-		$start_dt = self::create_site_datetime( $date, $start );
-		$end_dt   = self::create_site_datetime( $date, $end );
-
-		if ( ! $start_dt || ! $end_dt ) {
-			return '';
-		}
-
-		$date_label  = wp_date( 'F j, Y', $start_dt->getTimestamp() );
-		$start_label = wp_date( 'g:i A', $start_dt->getTimestamp() );
-		$end_label   = wp_date( 'g:i A', $end_dt->getTimestamp() );
+		$date_label  = self::format_site_datetime( $date, $start, 'F j, Y' );
+		$start_label = self::format_site_datetime( $date, $start, 'g:i A' );
+		$end_label   = self::format_site_datetime( $date, $end, 'g:i A' );
 		$tz          = self::timezone_abbreviation( $date, $start );
 
 		if ( ! $date_label || ! $start_label || ! $end_label || ! $tz ) {
@@ -631,6 +634,25 @@ class Helpers {
 	}
 
 	/**
+	 * Format a date and time in the site timezone.
+	 *
+	 * @param string $date   Y-m-d date. Falls back to 1970-01-01 for time-only labels.
+	 * @param string $time   Time string.
+	 * @param string $format PHP date format.
+	 * @return string
+	 */
+	private static function format_site_datetime( $date, $time, $format ) {
+		$datetime = self::create_site_datetime( $date ? $date : '1970-01-01', $time ? $time : '00:00:00' );
+		if ( ! $datetime ) {
+			return '';
+		}
+
+		$formatted = wp_date( $format, $datetime->getTimestamp(), $datetime->getTimezone() );
+
+		return $formatted ? $formatted : '';
+	}
+
+	/**
 	 * Create a DateTime in the site timezone.
 	 *
 	 * @param string $date Y-m-d date.
@@ -661,26 +683,9 @@ class Helpers {
 	 * @return string
 	 */
 	public static function datetime_attribute( $date, $time ) {
-		if ( ! $date || ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
-			return '';
-		}
-
-		$normalized = $time ? $time : '00:00:00';
-		if ( preg_match( '/^\d{2}:\d{2}$/', $normalized ) ) {
-			$normalized .= ':00';
-		}
-
-		if ( ! preg_match( '/^\d{2}:\d{2}:\d{2}$/', $normalized ) ) {
-			$normalized = self::normalize_acf_time( $normalized );
-		}
-
-		if ( ! $normalized ) {
-			return '';
-		}
-
-		$datetime = date_create( $date . ' ' . $normalized, wp_timezone() );
+		$datetime = self::create_site_datetime( $date, $time ? $time : '00:00:00' );
 		if ( ! $datetime ) {
-			return $date . 'T' . $normalized;
+			return '';
 		}
 
 		return $datetime->format( 'c' );
@@ -773,7 +778,7 @@ class Helpers {
 	}
 
 	/**
-	 * Normalize a time string to H:i:s.
+	 * Normalize a time string to H:i:s wall clock.
 	 *
 	 * @param string $time Time string.
 	 * @return string Empty string when invalid.
@@ -795,12 +800,27 @@ class Helpers {
 			return sprintf( '%02d:%02d:00', (int) $parts[0], (int) $parts[1] );
 		}
 
-		$timestamp = strtotime( $time );
-		if ( ! $timestamp ) {
+		$formats = array( 'g:i a', 'g:i A', 'h:i a', 'h:i A', 'g:i:s a', 'g:i:s A' );
+		foreach ( $formats as $format ) {
+			$parsed = \DateTime::createFromFormat( '!' . $format, strtolower( $time ), wp_timezone() );
+			if ( ! $parsed instanceof \DateTime ) {
+				continue;
+			}
+
+			$errors = \DateTime::getLastErrors();
+			if ( is_array( $errors ) && ( $errors['error_count'] > 0 || $errors['warning_count'] > 0 ) ) {
+				continue;
+			}
+
+			return $parsed->format( 'H:i:s' );
+		}
+
+		$parsed = date_create( $time, wp_timezone() );
+		if ( ! $parsed instanceof \DateTime ) {
 			return '';
 		}
 
-		return gmdate( 'H:i:s', $timestamp );
+		return $parsed->format( 'H:i:s' );
 	}
 
 	/**

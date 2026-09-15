@@ -231,8 +231,8 @@ class Schedule_Query {
 	 * @return string
 	 */
 	private function format_date_heading( $date ) {
-		$timestamp = strtotime( $date . ' 00:00:00' );
-		return $timestamp ? wp_date( get_option( 'date_format' ), $timestamp ) : $date;
+		$label = Helpers::format_date_label( $date );
+		return $label ? $label : $date;
 	}
 
 	/**

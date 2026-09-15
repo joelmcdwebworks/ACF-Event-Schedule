@@ -158,7 +158,7 @@ class Migrator {
 	 * @return void
 	 */
 	private static function migrate_event_dates( $post_id ) {
-		$existing = get_field( Field::EVENT_DATES, $post_id );
+		$existing = get_field( Field::EVENT_DATES, $post_id, false );
 		if ( is_array( $existing ) && ! empty( $existing ) ) {
 			self::delete_legacy_time_block_meta( $post_id );
 			return;

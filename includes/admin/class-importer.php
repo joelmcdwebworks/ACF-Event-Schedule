@@ -1584,7 +1584,7 @@ class Importer {
 			update_field( Field::KEY_SPACES, $space_rows, $event_id );
 		}
 
-		if ( $date_rows && ! get_field( Field::EVENT_DATES, $event_id ) ) {
+		if ( $date_rows && ! get_field( Field::EVENT_DATES, $event_id, false ) ) {
 			return new \WP_Error( 'aes_csv_dates', __( 'The event dates could not be saved.', 'acf-event-schedule' ) );
 		}
 
@@ -1688,41 +1688,29 @@ class Importer {
 	 * @return array<string, array<string, mixed>>
 	 */
 	private static function existing_dates( $event_id ) {
-		$days = get_field( Field::EVENT_DATES, $event_id );
-		if ( ! is_array( $days ) ) {
-			return array();
-		}
-
 		$dates = array();
 
-		foreach ( $days as $day ) {
-			$date = Helpers::sanitize_date( Helpers::normalize_acf_date( isset( $day[ Field::EVENT_DATE ] ) ? (string) $day[ Field::EVENT_DATE ] : '' ) );
-			if ( ! $date ) {
+		foreach ( Helpers::get_time_blocks( $event_id ) as $block ) {
+			$date  = Helpers::sanitize_date( $block['date'] ?? '' );
+			$id    = isset( $block['id'] ) ? (string) $block['id'] : '';
+			$start = Helpers::normalize_acf_time( $block['start'] ?? '' );
+			$end   = Helpers::normalize_acf_time( $block['end'] ?? '' );
+			if ( ! $date || ! $id || ! $start || ! $end ) {
 				continue;
 			}
 
-			$blocks = array();
-			$rows   = isset( $day[ Field::TIME_BLOCKS ] ) && is_array( $day[ Field::TIME_BLOCKS ] ) ? $day[ Field::TIME_BLOCKS ] : array();
-
-			foreach ( $rows as $row ) {
-				$id    = isset( $row[ Field::TIME_BLOCK_ID ] ) ? (string) $row[ Field::TIME_BLOCK_ID ] : '';
-				$start = Helpers::normalize_acf_time( isset( $row[ Field::TIME_BLOCK_START ] ) ? (string) $row[ Field::TIME_BLOCK_START ] : '' );
-				$end   = Helpers::normalize_acf_time( isset( $row[ Field::TIME_BLOCK_END ] ) ? (string) $row[ Field::TIME_BLOCK_END ] : '' );
-				if ( ! $id || ! $start || ! $end ) {
-					continue;
-				}
-
-				$blocks[ $start . '|' . $end ] = array(
-					'id'    => $id,
-					'title' => isset( $row[ Field::TIME_BLOCK_TITLE ] ) ? (string) $row[ Field::TIME_BLOCK_TITLE ] : '',
-					'start' => $start,
-					'end'   => $end,
+			if ( ! isset( $dates[ $date ] ) ) {
+				$dates[ $date ] = array(
+					'date'   => $date,
+					'blocks' => array(),
 				);
 			}
 
-			$dates[ $date ] = array(
-				'date'   => $date,
-				'blocks' => $blocks,
+			$dates[ $date ]['blocks'][ $start . '|' . $end ] = array(
+				'id'    => $id,
+				'title' => isset( $block['title'] ) ? (string) $block['title'] : '',
+				'start' => $start,
+				'end'   => $end,
 			);
 		}
 
