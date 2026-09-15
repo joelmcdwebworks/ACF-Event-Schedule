@@ -2,11 +2,13 @@
 
 Create sessions, speakers, and event schedules with Advanced Custom Fields.
 
-[![Version](https://img.shields.io/badge/version-1.1.16-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
+[![Version](https://img.shields.io/badge/version-1.1.17-blue)](https://github.com/joelmcdwebworks/ACF-Event-Schedule)
 [![WordPress](https://img.shields.io/badge/WordPress-6.4%2B-21759B)](https://wordpress.org/)
 [![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4)](https://www.php.net/)
 [![ACF](https://img.shields.io/badge/ACF-Pro-00D3AA)](https://www.advancedcustomfields.com/pro/)
 [![License](https://img.shields.io/badge/license-GPL--3.0--or--later-green)](LICENSE)
+
+[![Watch the demo](https://img.youtube.com/vi/apV5dJjQtEE/maxresdefault.jpg)](https://youtu.be/apV5dJjQtEE)
 
 This is not a standalone events plugin. You attach a schedule to **existing public post types** (for example Pie Calendar events) chosen in settings. Those events get Dates, Time Blocks, and Spaces. The plugin then adds **Session** and **Speaker** post types and renders a time-by-space grid on the front end.
 
