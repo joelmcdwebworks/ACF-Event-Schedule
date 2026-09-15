@@ -23,6 +23,7 @@ class Shortcode {
 		add_shortcode( 'event-schedule', array( self::class, 'render' ) );
 		add_shortcode( 'session-times', array( self::class, 'render_session_times' ) );
 		add_shortcode( 'session-speakers', array( self::class, 'render_session_speakers' ) );
+		add_shortcode( 'session-space', array( self::class, 'render_session_space' ) );
 	}
 
 	/**
@@ -131,6 +132,29 @@ class Shortcode {
 		}
 
 		return '<span class="aes-session-speakers">' . implode( ', ', $links ) . '</span>';
+	}
+
+	/**
+	 * Render a session's space name.
+	 *
+	 * @param array<string, string>|string $atts Shortcode attributes.
+	 * @return string
+	 */
+	public static function render_session_space( $atts ) {
+		$session_id = self::get_session_id( $atts, 'session-space' );
+		if ( ! $session_id ) {
+			return '';
+		}
+
+		$event_id = Helpers::normalize_id( get_field( Field::SESSION_EVENT, $session_id ) );
+		$space_id = (string) get_field( Field::SESSION_SPACE, $session_id );
+		$label    = Helpers::get_space_name( $event_id, $space_id );
+
+		if ( '' === $label ) {
+			return '';
+		}
+
+		return '<span class="aes-session-space">' . esc_html( $label ) . '</span>';
 	}
 
 	/**
